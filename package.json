@@ -1,0 +1,15 @@
+{
+  "name": "devtinder",
+  "version": "1.0.0",
+  "description": "nodeJs project with express ",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Akash Patel",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}
