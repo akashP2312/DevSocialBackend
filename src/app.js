@@ -1,21 +1,53 @@
 const express = require('express');
 
 const app = express();
+const { connectDB } = require('./config/database');
+const User = require('./config/models/user');
 
-const { adminMiddleware } = require('./middlewares/admin')
+app.use(express.json());
 
-app.get('/admin/data',
-    adminMiddleware,
-    (req, res) => {
-        res.send("sent all data to admin")
-    })
+app.post('/signup', async (req, res, next) => {
 
-app.post('/admin/createUser',
-    adminMiddleware,
-    (req, res) => {
-        res.send("user created successfully")
-    })
+    console.log(req.body);
+    try {
+        const user = new User(req.body);
+        await user.save();
+        res.send("user saved successfully");
+    } catch (error) {
+        next(error);
+    }
+});
 
-app.listen('4322', () => {
-    console.log('server started successfully');
+app.get('/feed', async (req, res) => {
+    try {
+        const users = await User.find({});
+        res.send(users);
+    } catch {
+        res.status(500).send("some error occured")
+    }
 })
+
+app.post('/user', async (req, res) => {
+    console.log(req.body)
+    try {
+        const users = await User.find(req.body);
+        res.send(users);
+    } catch {
+        res.status(500).send("some error occured")
+    }
+})
+
+app.use((err, req, res, next) => {
+    console.log('first block');
+    if (err) {
+        res.status(500).send('error occured')
+    }
+
+})
+
+connectDB().then(() => {
+    console.log("Database connected successfully");
+    app.listen('7777', () => {
+        console.log('server started successfully');
+    })
+}).catch(err => console.log("some Error occured", err))
