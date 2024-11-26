@@ -37,10 +37,24 @@ app.post('/user', async (req, res) => {
     }
 })
 
+app.patch('/user', async (req, res, next) => {
+    const filter = req.body.filter;
+    const update = req.body;
+
+    try {
+        await User.updateMany(filter, update, { runValidators: true });
+        res.send("user data updated successfully")
+    } catch (err) {
+        next(err);
+    }
+
+
+})
+
 app.use((err, req, res, next) => {
     console.log('first block');
     if (err) {
-        res.status(500).send('error occured')
+        res.status(500).send('error occured ' + err.message)
     }
 
 })
