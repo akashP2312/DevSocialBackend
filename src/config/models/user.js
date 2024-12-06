@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
+const validator = require('validator');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 
 const userSchema = new Schema({
     firstName: {
@@ -10,27 +14,27 @@ const userSchema = new Schema({
         maxLength: 15,
     },
     lastName: {
-        type: String
+        type: String,
+        minLength: 3,
+        maxLength: 10
     },
     age: {
         type: Number,
-        min: 18
+        min: 18,
+        max: 90
     },
     city: {
         type: String,
-        default: 'Anand'
+        default: 'Anand',
+        minLength: 3,
+        maxLength: 10
     },
     gender: {
         type: String,
-        validate: {
-            validator: function (value) {
-                if (value === 'Male' || value == 'Female') {
-                    return true;
-                }
-                return false;
-            },
-            message: "value must be Male or Female"
-        },
+        enum: {
+            values: ['Male', 'Female'],
+            message: '{VALUE} is not supported'
+        }
 
     },
     emailId: {
@@ -38,19 +42,42 @@ const userSchema = new Schema({
         required: true,
         unique: true,
         lowercase: true,
-        trim: true
+        trim: true,
+        minLength: 5,
+        maxLength: 40,
+        validate(value) {
+            if (!validator.isEmail(value)) {
+                throw new Error('Invalid email ID')
+            }
+        }
     },
     password: {
         type: String,
         required: true,
-        minLength: 5
+        validate(value) {
+            if (!validator.isStrongPassword(value)) {
+                throw new Error('password is not strong')
+            }
+        }
     },
     skills: {
-        type: [String]
+        type: [String],
+        validate(value) {
+            if (value.length > 10) {
+                throw new Error('Only 9 skills are allowed')
+            }
+        }
     }
 },
     { timestamps: true });
 
-const User = mongoose.model('user', userSchema);
+userSchema.methods.getJWT = async function () {
+    console.log('this', this)
+    const jwtToken = jwt.sign({ _id: this._id }, "Me@jwtpass2312");
+    console.log('token', jwtToken);
+    return jwtToken;
+};
+
+const User = mongoose.model('User', userSchema);
 
 module.exports = User;

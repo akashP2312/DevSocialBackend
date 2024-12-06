@@ -2,54 +2,27 @@ const express = require('express');
 
 const app = express();
 const { connectDB } = require('./config/database');
-const User = require('./config/models/user');
+
+const cookieParser = require('cookie-parser');
+const authRouter = require('./routes/auth');
+const profileRouter = require('./routes/profile');
+const connectionRouter = require('./routes/connection');
+const userRouter = require('./routes/userRoute');
+const cors = require('cors');
+let corsOptions = {
+    origin: 'http://localhost:5173',
+    credentials: true
+}
 
 app.use(express.json());
-
-app.post('/signup', async (req, res, next) => {
-
-    console.log(req.body);
-    try {
-        const user = new User(req.body);
-        await user.save();
-        res.send("user saved successfully");
-    } catch (error) {
-        next(error);
-    }
-});
-
-app.get('/feed', async (req, res) => {
-    try {
-        const users = await User.find({});
-        res.send(users);
-    } catch {
-        res.status(500).send("some error occured")
-    }
-})
-
-app.post('/user', async (req, res) => {
-    console.log(req.body)
-    try {
-        const users = await User.find(req.body);
-        res.send(users);
-    } catch {
-        res.status(500).send("some error occured")
-    }
-})
-
-app.patch('/user', async (req, res, next) => {
-    const filter = req.body.filter;
-    const update = req.body;
-
-    try {
-        await User.updateMany(filter, update, { runValidators: true });
-        res.send("user data updated successfully")
-    } catch (err) {
-        next(err);
-    }
+app.use(cookieParser());
+app.use(cors(corsOptions));
 
 
-})
+app.use('/', authRouter);
+app.use('/', profileRouter);
+app.use('/connection', connectionRouter);
+app.use('/user', userRouter);
 
 app.use((err, req, res, next) => {
     console.log('first block');
