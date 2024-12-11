@@ -14,7 +14,7 @@ const helmet = require('helmet');
 const compression = require('compression');
 
 let corsOptions = {
-    origin: 'http://localhost:5173',
+    origin: ['http://localhost:5173', 'http://devsocialuibucket.s3-website.eu-north-1.amazonaws.com/'],
     credentials: true
 }
 
