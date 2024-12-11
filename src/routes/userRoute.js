@@ -13,7 +13,7 @@ userRouter.get('/connections', useAuthValidator, async (req, res) => {
         const userConnections = await Connection.find({
             $and: [
                 {
-                    status: 'approved'
+                    status: 'accepted'
                 },
                 {
                     $or: [{
@@ -24,7 +24,7 @@ userRouter.get('/connections', useAuthValidator, async (req, res) => {
                     }]
                 }
             ]
-        }).populate('fromUserId', 'firstName lastName city skills').populate('toUserId', 'firstName lastName city skills');
+        }).populate('fromUserId', 'firstName lastName city skills imageUrl age about').populate('toUserId', 'firstName lastName city skills imageUrl age about');
 
         const filteredData = userConnections.map(connection => {
             const otherUserData = connection.fromUserId.equals(loggedInUser._id) ? connection.toUserId : connection.fromUserId;
@@ -52,7 +52,7 @@ userRouter.get('/requests/received', useAuthValidator, async (req, res) => {
             }, {
                 status: 'interested'
             }]
-        }).populate('fromUserId', 'firstName lastName city skills');
+        }).populate('fromUserId', 'firstName lastName city skills about age imageUrl');
         res.send(requests);
     }
     catch (err) {
@@ -85,9 +85,9 @@ userRouter.get('/feed', useAuthValidator, async (req, res) => {
                 { _id: { $nin: Array.from(removeUsers) } },
                 { _id: { $ne: loggedInUser._id } }
             ]
-        }).select("firstName lastName skills city")
+        }).select("firstName lastName skills city imageUrl age gender about")
             .skip(skipRecords)
-            .limit(lim);
+            .limit(limit);
 
         res.send(feedData)
     } catch (err) {

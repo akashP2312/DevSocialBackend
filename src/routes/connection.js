@@ -5,6 +5,7 @@ const User = require('../config/models/user');
 const Connection = require('../config/models/connection');
 
 const connectionRouter = express.Router();
+const { ObjectId } = require('mongodb');
 
 connectionRouter.post('/request/:status/:id', useAuthValidator, async (req, res) => {
     const fromUser = req.user;
@@ -55,10 +56,10 @@ connectionRouter.post('/review/:status/:requestId', useAuthValidator, async (req
         const status = req.params.status;
         const requestId = req.params.requestId;
 
-        const allowedStatus = ['approved', 'rejected'];
+        const allowedStatus = ['accepted', 'rejected'];
 
         if (!allowedStatus.includes(status)) {
-            throw new Error('You can either approve or reject this request.')
+            throw new Error('You can either accept or reject this request.')
         }
 
         const connectionData = await Connection.findOne({

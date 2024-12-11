@@ -24,8 +24,12 @@ authRouter.post('/signup', async (req, res, next) => {
             emailId,
             password: encryptedPass
         });
-        await user.save();
-        res.send("user saved successfully");
+        const savedUser = await user.save();
+
+        const jwtToken = await savedUser.getJWT();
+        res.cookie("token", jwtToken);
+
+        res.json({ message: "user saved successfully", data: savedUser });
     } catch (error) {
         next(error);
     }
@@ -36,6 +40,7 @@ authRouter.post('/login', async (req, res) => {
 
     try {
         const storedUser = await User.findOne({ emailId: emailId });
+        console.log(storedUser)
         if (!storedUser) {
             return res.status(401).send("Invalid credentials");
         }

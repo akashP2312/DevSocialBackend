@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 
-const pass = 'Me%40mongopass23';
+require('dotenv').config();
+const mongoUri = process.env.MONGO_URI;
+console.log(mongoUri);
 async function connectDB() {
-    await mongoose.connect(`mongodb+srv://aspatel231293:${pass}@namastenode.ygtrw.mongodb.net/devTinder`);
+    await mongoose.connect(mongoUri);
 }
 
 module.exports = {

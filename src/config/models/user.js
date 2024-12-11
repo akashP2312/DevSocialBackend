@@ -67,6 +67,14 @@ const userSchema = new Schema({
                 throw new Error('Only 9 skills are allowed')
             }
         }
+    },
+    about: {
+        type: String,
+        default: 'This is default about me.'
+    },
+    imageUrl: {
+        type: String,
+        default: 'https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg'
     }
 },
     { timestamps: true });

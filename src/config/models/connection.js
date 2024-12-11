@@ -13,7 +13,7 @@ const connectionSchema = new mongoose.Schema({
     status: {
         type: String,
         enum: {
-            values: ['interested', 'ignored', 'approved', 'rejected'],
+            values: ['interested', 'ignored', 'accepted', 'rejected'],
             message: '{VALUE} is not valid option for {PATH}'
         }
     }
