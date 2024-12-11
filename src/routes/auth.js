@@ -47,11 +47,7 @@ authRouter.post('/login', async (req, res) => {
         const isValid = await bcrypt.compare(password, storedUser.password)
         if (isValid) {
             const jwtToken = await storedUser.getJWT();
-            res.cookie("token", jwtToken, {
-                httpOnly: true, // Secure cookie, inaccessible to JavaScript
-                secure: false,   // Send cookie only over HTTPS (set false for local testing)
-                sameSite: 'None', // Required for cross-origin requests
-            });
+            res.cookie("token", jwtToken);
             return res.send(storedUser);
         } else {
             return res.status(401).send("Invalid credentials")
