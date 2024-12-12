@@ -50,7 +50,7 @@ authRouter.post('/login', async (req, res) => {
             res.cookie("token", jwtToken, {
                 httpOnly: true, // Secure cookie, inaccessible to JavaScript
                 secure: process.env.NODE_ENV === 'production',   // Send cookie only over HTTPS (set false for local testing)
-                sameSite: 'None', // Required for cross-origin requests
+                sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax' // Required for cross-origin requests
             });
             return res.send(storedUser);
         } else {
